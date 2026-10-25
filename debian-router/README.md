@@ -15,9 +15,11 @@ At first, the client and server are connected to separate internal networks. Bec
 ## Configure the client and server networks
 
 Configure the client on the `192.168.10.0/24` network.
+
 ![Client network configuration](screenshots/01-client-network-config.png)
 
 Configure the server on the `192.168.20.0/24` network.
+
 ![Server network configuration](screenshots/02-server-network-config.png)
 
 Restart networking after changing `/etc/network/interfaces`:
@@ -33,9 +35,11 @@ ip -br a
 ```
 
 Client:
+
 ![Client network interfaces](screenshots/03-client-interfaces.png)
 
 Server:
+
 ![Server network interfaces](screenshots/04-server-interfaces.png)
 
 In this VirtualBox setup, `enp0s3` corresponds to the NAT adapter, which is disabled for this demonstration. The `enp0s8` interface connects the client and server VMs to their respective internal networks. Interface names may vary between systems, so verify them with `ip -br address`.
@@ -45,6 +49,7 @@ In this VirtualBox setup, `enp0s3` corresponds to the NAT adapter, which is disa
 The client and server are on different IP subnets. Without a router or another configured Layer 3 path, they cannot communicate directly.
 
 For example, a ping from the server to the client fails:
+
 ![Failed ping before router configuration](screenshots/05-fails.png)
 
 This is the problem the router will solve.
@@ -82,6 +87,7 @@ Configure the router's internal interfaces with static IP addresses in the corre
 The router is configured as follows:
 - `enp0s8`: connected to `lab-client`, with IP address `192.168.10.254/24`.
 - `enp0s9`: connected to `lab-server`, with IP address `192.168.20.254/24`.
+  
 ![Debian router network configuration](screenshots/08-router-network-config.png)
 
 Apply the configuration:
@@ -95,6 +101,7 @@ Verify the interfaces:
 ```bash
 ip -br address
 ```
+
 ![Debian router network interfaces](screenshots/09-router-interfaces.png)
 
 ## Enable IPv4 packet forwarding
@@ -118,6 +125,7 @@ The expected result is:
 ```text
 net.ipv4.ip_forward = 1
 ```
+
 ![IPv4 packet forwarding enabled](screenshots/10-router-packet-forward.png)
 
 ## Configure the default gateway on the client and server
@@ -127,6 +135,7 @@ Each machine needs a default gateway pointing to the router interface on its own
 ### Client
 
 Set the default gateway to the router's address on `192.168.10.0/24`.
+
 ![Client default gateway configuration](screenshots/11-client-network-gateway-config.png)
 
 Restart networking:
@@ -142,11 +151,13 @@ ip route
 ```
 
 The default route should point to the router's client-facing IP address.
+
 ![Client routing table](screenshots/12-client-check-route.png)
 
 ### Server
 
 Set the default gateway to the router's address on `192.168.20.0/24`.
+
 ![Server default gateway configuration](screenshots/13-server-network-gateway-config.png)
 
 Restart networking:
@@ -162,6 +173,7 @@ ip route
 ```
 
 The default route should point to the router's server-facing IP address.
+
 ![Server routing table](screenshots/14-server-check-route.png)
 
 ## Test connectivity
@@ -173,6 +185,7 @@ ping 192.168.20.1
 ```
 
 If the IP addresses, gateways, interfaces, and forwarding setting are correct, the client should receive replies from the server.
+
 ![Successful ping from client to server](screenshots/15-final-ping-test.png)
 
 The router is now forwarding IPv4 traffic between the two internal networks.
