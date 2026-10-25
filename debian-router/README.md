@@ -45,7 +45,7 @@ In this VirtualBox setup, `enp0s3` corresponds to the NAT adapter, which is disa
 The client and server are on different IP subnets. Without a router or another configured Layer 3 path, they cannot communicate directly.
 
 For example, a ping from the server to the client fails:
-![Failed ping before router configuration](05-fails.png)
+![Failed ping before router configuration](screenshots/05-fails.png)
 
 This is the problem the router will solve.
 
